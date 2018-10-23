@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gateway
+  #annotations:
+  #    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/team/.*
+        backend:
+          serviceName: fancave-teams
+          servicePort: 3080
+      - path: /api/news/.*
+        backend:
+          serviceName: fancave-news
+          servicePort: 3080
+      - path: /api/player/.*
+        backend:
+          serviceName: fancave-players
+          servicePort: 3080
+      - path: /index.html
+        backend:
+          serviceName: fancave-client
+          servicePort: 3080
+      - path: /build/.*
+        backend:
+            serviceName: fancave-client
+            servicePort: 3080
+      - path: /assets/.*
+        backend:
+            serviceName: fancave-client
+            servicePort: 3080

@@ -1,0 +1,88 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: yahoo-sports-egress
+spec:
+  hosts:
+  - sports.yahoo.com
+  ports:
+    - number: 443
+      name: https
+      protocol: http
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: yahoo-sports-egress
+spec:
+  host: sports.yahoo.com
+  trafficPolicy:
+    tls:
+      mode: SIMPLE
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: yahoo-login-egress
+spec:
+  hosts:
+  - api.login.yahoo.com
+  ports:
+    - number: 443
+      name: https
+      protocol: http
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: yahoo-login-egress
+spec:
+  host: api.login.yahoo.com
+  trafficPolicy:
+    tls:
+      mode: SIMPLE
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: yahoo-query-egress
+spec:
+  hosts:
+  - query.yahooapis.com
+  ports:
+    - number: 443
+      name: https
+      protocol: http
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: yahoo-query-egress
+spec:
+  host: query.yahooapis.com
+  trafficPolicy:
+    tls:
+      mode: SIMPLE
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: yahoo-fsports-egress
+spec:
+  hosts:
+  - fantasysports.yahooapis.com
+  ports:
+    - number: 443
+      name: https
+      protocol: http
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: yahoo-fsports-egress
+spec:
+  host: fantasysports.yahooapis.com
+  trafficPolicy:
+    tls:
+      mode: SIMPLE

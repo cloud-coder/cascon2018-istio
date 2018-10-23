@@ -1,0 +1,53 @@
+apiVersion: "config.istio.io/v1alpha2"
+kind: metric
+metadata:
+  name: mongosentbytes
+  namespace: istio-system
+spec:
+  value: connection.sent.bytes | 0 # uses a TCP-specific attribute
+  dimensions:
+    source_service: source.service | "unknown"
+  monitoredResourceType: '"UNSPECIFIED"'
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: metric
+metadata:
+  name: mongoreceivedbytes
+  namespace: istio-system
+spec:
+  value: connection.received.bytes | 0 # uses a TCP-specific attribute
+  dimensions:
+    source_service: source.service | "unknown"
+  monitoredResourceType: '"UNSPECIFIED"'
+---
+# Configuration for a Prometheus handler
+apiVersion: "config.istio.io/v1alpha2"
+kind: prometheus
+metadata:
+  name: mongohandler
+  namespace: istio-system
+spec:
+  metrics:
+  - name: mongo_sent_bytes # Prometheus metric name
+    instance_name: mongosentbytes.metric.istio-system # Mixer instance name (fully-qualified)
+    kind: COUNTER
+    label_names:
+    - source_service
+  - name: mongo_received_bytes # Prometheus metric name
+    instance_name: mongoreceivedbytes.metric.istio-system # Mixer instance name (fully-qualified)
+    kind: COUNTER
+    label_names:
+    - source_service
+---
+# Rule to send metric instances to a Prometheus handler
+apiVersion: "config.istio.io/v1alpha2"
+kind: rule
+metadata:
+  name: prom
+  namespace: istio-system
+spec:
+  actions:
+  - handler: mongohandler.prometheus
+    instances:
+    - mongosentbytes.metric
+    - mongoreceivedbytes.metric

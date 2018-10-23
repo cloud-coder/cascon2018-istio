@@ -1,0 +1,41 @@
+# Configuration for metric instances
+apiVersion: "config.istio.io/v1alpha2"
+kind: metric
+metadata:
+  name: requestcount
+  namespace: istio-system
+spec:
+  value: "1" # count each request twice
+  dimensions:
+    source: source.service | "unknown"
+    destination: destination.service | "unknown"
+    message: '"New request!"'
+  monitored_resource_type: '"UNSPECIFIED"'
+---
+# Configuration for a Prometheus handler
+apiVersion: "config.istio.io/v1alpha2"
+kind: prometheus
+metadata:
+  name: handler
+  namespace: istio-system
+spec:
+  metrics:
+  - name: request_count # Prometheus metric name
+    instance_name: requestcount.metric.istio-system # Mixer instance name (fully-qualified)
+    kind: COUNTER
+    label_names:
+    - source
+    - destination
+    - message
+---
+# Rule to send metric instances to a Prometheus handler
+apiVersion: "config.istio.io/v1alpha2"
+kind: rule
+metadata:
+  name: prom
+  namespace: istio-system
+spec:
+  actions:
+  - handler: handler.prometheus
+    instances:
+    - requestcount.metric

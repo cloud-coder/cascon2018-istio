@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: news
+  name: fancave-news
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: news
+    spec:
+      containers:
+      - image: ozairs/fancave-server:v1
+        name: fancave-news
+        ports:
+        - containerPort: 3080
+        livenessProbe:
+          tcpSocket:
+            port: 3080
+          initialDelaySeconds: 10
+          periodSeconds: 15

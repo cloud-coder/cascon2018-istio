@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: teams
+  name: fancave-teams
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: teams
+    spec:
+      containers:
+      - image: ozairs/fancave-server:v1
+        name: fancave-teams
+        ports:
+        - containerPort: 3080
+        livenessProbe:
+          tcpSocket:
+            port: 3080
+          initialDelaySeconds: 10
+          periodSeconds: 15

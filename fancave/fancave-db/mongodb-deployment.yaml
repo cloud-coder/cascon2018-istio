@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: database
+  name: fancave-db
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+      - image: ozairs/fancave-db:v1
+        name: mongodb
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongodb-claim0
+        livenessProbe:
+          tcpSocket:
+            port: 27017
+          initialDelaySeconds: 10
+          periodSeconds: 15
+      volumes:
+      - name: mongodb-claim0
+        persistentVolumeClaim:
+          claimName: dbclaim0

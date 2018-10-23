@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: players
+  name: fancave-players
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: players
+    spec:
+      containers:
+      - image: ozairs/fancave-server:v1
+        name: fancave-players
+        ports:
+        - containerPort: 3080
+        readinessProbe:
+          tcpSocket:
+            port: 3080
+          initialDelaySeconds: 5
+          periodSeconds: 15
+        livenessProbe:
+          tcpSocket:
+            port: 3080
+          initialDelaySeconds: 10
+          periodSeconds: 20
