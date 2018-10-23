@@ -1,12 +1,10 @@
 # 1. Modernize digital applications with Microservices management
 
-Table of Contents
-
 <!-- TOC -->
 
 - [1. Modernize digital applications with Microservices management](#1-modernize-digital-applications-with-microservices-management)
-    - [1.1. Overview of Microservices Management](#11-overview-of-microservices-management)
-    - [1.2. Pre-requisites](#12-pre-requisites)
+    - [1.1. Pre-requisites](#11-pre-requisites)
+    - [1.2. Overview of Microservices Management](#12-overview-of-microservices-management)
     - [1.3. Deploy application using Kubernetes](#13-deploy-application-using-kubernetes)
     - [1.4. Deploy application using Istio](#14-deploy-application-using-istio)
     - [1.5. Service Graph](#15-service-graph)
@@ -19,7 +17,21 @@ Table of Contents
 
 <!-- /TOC -->
 
-## 1.1. Overview of Microservices Management
+## 1.1. Pre-requisites
+
+In your environment, you should have the following components already setup:
+ * [Kubernetes V1.10 cluster](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)
+ * [Docker V17.03.2](https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-using-the-convenience-script )
+ * [kubectl V1.10](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl)
+ * [Kubernetes storage](https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolume)
+ * [Istio V1.0.1](curl -L https://git.io/getLatestIstio | sh -)
+ * [Install Istio without security](kubectl apply -f install/kubernetes/istio-demo.yaml)
+
+Alternatively, you can run [Minikube 0.30](https://github.com/kubernetes/minikube/releases) which provides a single node Kubernetes cluster. You will than need to complete the Istio instructions above.
+
+The files for the application can be downloaded [here](https://github.com/cloud-coder/cascon-2018-istio). The ZIP file can be downloaded directly from the Web site or using [git](git@github.com:cloud-coder/cascon-2018-istio.git)
+
+## 1.2. Overview of Microservices Management
 
  Digital applications for Web, Mobile, and IoT channels are being architected and developed using modernized approaches - microservices design and deployment on container platforms. Microservices design breaks out an application into seperate consumable components / functions. Each component is a building block for a business domain capability that performs a specific function independently from other components. It provides the flexibility to use the programming language, database technology, and runtime that is best designed to solve the problem. Examples of domain-driven design are “fund transfer” services. Examples of non-domain-driven design are Authentication or logging services.
 
@@ -58,20 +70,6 @@ Before we get into the details of this tutorial, it is important to understand t
 An API exposes a set of functionality from one or more microservicies at the ingress to the client application. In a microservices-based application, the quantity of runtime components increases, which requires enhanced management capabilities to provide operational resiliency and performance. Container platforms, such as Kubernetes provide scheduling, monitoring and load balancing of containers, but don't manage the interaction between microservices. For example, digital applications need rate limiting between microservices, application-specific load balancing, microservices security, and much more. Istio is a microservices management platform, built on top of Kubernetes, which introduces a [side-car architecture](https://istio.io/docs/concepts/what-is-istio/#architecture) to deliver a comprehensive set of microservices management features. 
 
 In this tutorial, you will learn how Istio can help manage your microservices-based application, specifically you will start with the deployment of the Fancave application into Kubernetes, and then again using Istio, but demonstrating the microservices management features.
-
-## 1.2. Pre-requisites
-
-In your environment, you should have the following components already setup:
- * [Kubernetes V1.10 cluster](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)
- * [Docker V17.03.2](https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-using-the-convenience-script )
- * [kubectl V1.10](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl)
- * [Kubernetes storage](https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolume)
- * [Istio V1.0.1](curl -L https://git.io/getLatestIstio | sh -)
- * [Install Istio without security](kubectl apply -f install/kubernetes/istio-demo.yaml)
-
-Alternatively, you can run [Minikube 0.30](https://github.com/kubernetes/minikube/releases) which provides a single node Kubernetes cluster. You will than need to complete the Istio instructions above.
-
-The files for the application can be downloaded [here](https://github.com/cloud-coder/cascon-2018-istio). The ZIP file can be downloaded directly from the Web site or using [git](git@github.com:cloud-coder/cascon-2018-istio.git)
  
 ## 1.3. Deploy application using Kubernetes
 
@@ -484,7 +482,7 @@ In this tutorial, you learned how to build and deploy a modernized digital appli
 
 You can remove the fancave application and the istio policies with the following commands:
 
-
+```
 kubectl delete deployment fancave-client fancave-teams fancave-players fancave-news fancave-db
 kubectl delete service fancave-client fancave-teams fancave-players fancave-news fancave-db
 kubectl delete pvc dbclaim0
@@ -493,3 +491,4 @@ kubectl delete -f <(istioctl kube-inject -f ./istio/egress.yaml)
 kubectl delete -f <(istioctl kube-inject -f ./istio/metrics.yaml)
 kubectl delete -f <(istioctl kube-inject -f ./istio/metrics-db.yaml)
 kubectl delete -f <(istioctl kube-inject -f ./istio/rate-limit.yaml)
+```
