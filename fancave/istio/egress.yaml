@@ -8,18 +8,29 @@ spec:
   - sports.yahoo.com
   ports:
     - number: 443
-      name: https
-      protocol: http
+      name: https-port
+      protocol: https
+  resolution: DNS
+  location: MESH_EXTERNAL
 ---
 apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+kind: VirtualService
 metadata:
   name: yahoo-sports-egress
 spec:
-  host: sports.yahoo.com
-  trafficPolicy:
-    tls:
-      mode: SIMPLE
+  hosts:
+  - sports.yahoo.com
+  tls:
+  - match:
+    - port: 443
+      sni_hosts:
+      - sports.yahoo.com
+    route:
+    - destination:
+        host: sports.yahoo.com
+        port:
+          number: 443
+      weight: 100
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -30,18 +41,27 @@ spec:
   - api.login.yahoo.com
   ports:
     - number: 443
-      name: https
-      protocol: http
+      name: https-port
+      protocol: https
 ---
 apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+kind: VirtualService
 metadata:
   name: yahoo-login-egress
 spec:
-  host: api.login.yahoo.com
-  trafficPolicy:
-    tls:
-      mode: SIMPLE
+  hosts:
+  - api.login.yahoo.com
+  tls:
+  - match:
+    - port: 443
+      sni_hosts:
+      - api.login.yahoo.com
+    route:
+    - destination:
+        host: api.login.yahoo.com
+        port:
+          number: 443
+      weight: 100
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -52,18 +72,27 @@ spec:
   - query.yahooapis.com
   ports:
     - number: 443
-      name: https
-      protocol: http
+      name: https-port
+      protocol: https
 ---
 apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+kind: VirtualService
 metadata:
   name: yahoo-query-egress
 spec:
-  host: query.yahooapis.com
-  trafficPolicy:
-    tls:
-      mode: SIMPLE
+  hosts:
+  - query.yahooapis.com
+  tls:
+  - match:
+    - port: 443
+      sni_hosts:
+      - query.yahooapis.com
+    route:
+    - destination:
+        host: query.yahooapis.com
+        port:
+          number: 443
+      weight: 100
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
@@ -74,15 +103,24 @@ spec:
   - fantasysports.yahooapis.com
   ports:
     - number: 443
-      name: https
-      protocol: http
+      name: https-port
+      protocol: https
 ---
 apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+kind: VirtualService
 metadata:
   name: yahoo-fsports-egress
 spec:
-  host: fantasysports.yahooapis.com
-  trafficPolicy:
-    tls:
-      mode: SIMPLE
+  hosts:
+  - fantasysports.yahooapis.com
+  tls:
+  - match:
+    - port: 443
+      sni_hosts:
+      - fantasysports.yahooapis.com
+    route:
+    - destination:
+        host: fantasysports.yahooapis.com
+        port:
+          number: 443
+      weight: 100
