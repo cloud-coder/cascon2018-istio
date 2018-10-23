@@ -24,8 +24,8 @@ In your environment, you should have the following components already setup:
  * [Docker V17.03.2](https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-using-the-convenience-script )
  * [kubectl V1.10](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl)
  * [Kubernetes storage](https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolume)
- * [Istio V1.0.1](curl -L https://git.io/getLatestIstio | sh -)
- * [Install Istio without security](kubectl apply -f install/kubernetes/istio-demo.yaml)
+ * Istio V1.0.1 - Run `curl -L https://git.io/getLatestIstio | sh -)`
+ * Install Istio without security - Run `kubectl apply -f install/kubernetes/istio-demo.yaml`
 
 Alternatively, you can run [Minikube 0.30](https://github.com/kubernetes/minikube/releases) which provides a single node Kubernetes cluster. You will than need to complete the Istio instructions above.
 
@@ -144,12 +144,14 @@ type: ClusterIP
 
 2. After deployment, you should see the following pods. Their status should display `Running`.
 
-NAME                              READY     STATUS    RESTARTS   AGE
-fancave-client-66764c4796-jdzls   1/1       Running   0          20m
-fancave-db-c9d67ccb7-r62hx        1/1       Running   0          25m
-fancave-news-7b577ff4b7-m45cp     1/1       Running   0          24m
-fancave-players-bcfd9bd68-j5ggh   1/1       Running   0          22m
-fancave-teams-5c9d65b88c-jvncc    1/1       Running   0          21m
+	```
+	NAME                              READY     STATUS    RESTARTS   AGE
+	fancave-client-66764c4796-jdzls   1/1       Running   0          20m
+	fancave-db-c9d67ccb7-r62hx        1/1       Running   0          25m
+	fancave-news-7b577ff4b7-m45cp     1/1       Running   0          24m
+	fancave-players-bcfd9bd68-j5ggh   1/1       Running   0          22m
+	fancave-teams-5c9d65b88c-jvncc    1/1       Running   0          21m
+	```
 
 3. Run the Fancave application using the fancave-client microservice. You will first need to determine the IP address of the kubernetes cluster. This should be the IP address of your primary Ethernet interface. If your running on minikube, you can enter the command `minikube ip`. 
 
@@ -170,9 +172,11 @@ In the above output, use the mapped port from the `fancave-client ..... 3080:306
 
 6. You were able to successfully deploy the Fancave application using Kubernetes. In the next step, you will deploy it using Istio. Delete the Fancave Application to revert back to a clean environment.
 
+	```
 	kubectl delete deployment fancave-client fancave-teams fancave-players fancave-news fancave-db
 	kubectl delete service fancave-client fancave-teams fancave-players fancave-news fancave-db
 	kubectl delete pvc dbclaim0
+	```
 
 ## 1.4. Deploy application using Istio
 
@@ -294,7 +298,7 @@ The service graph plugin provides a visual view of the dependencies between each
 
 3. Using the Web browser, enter the URL `http://127.0.0.1:8088/force/forcegraph.html`. You should see the following graph.
 
-	![alt]images/servicegraph.png)
+	![alt](images/servicegraph.png)
 
 ## 1.6. Distributed Tracing
 
@@ -314,8 +318,6 @@ In this section, you will use the tracing plugin to view tracing information bet
 	```
 
 3. Using the Web browser, enter the URL `http://127.0.0.1:16686/`. You should see the Jaegar UI. Navigate back to the Fancave application and click the various microservices so you can generate trace data.
-
-	![alt](images/servicegraph.png)
 
 4. In the vertical navigation bar, select the service `istio-ingressgateway` and click **Find Traces**. You should see the various microservices called as part of the transaction.
 
