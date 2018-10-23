@@ -482,6 +482,7 @@ In this tutorial, you learned how to build and deploy a modernized digital appli
 
 You can remove the fancave application and the istio policies with the following commands:
 
+
 ```
 kubectl delete deployment fancave-client fancave-teams fancave-players fancave-news fancave-db
 kubectl delete service fancave-client fancave-teams fancave-players fancave-news fancave-db
