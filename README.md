@@ -135,11 +135,11 @@ type: ClusterIP
 1. Deploy each microservices using kubectl into a single node Kubernetes cluster
 
 	```
-    kubectl create -f ./fancave-db/
-	kubectl create -f ./fancave-news/
-	kubectl create -f ./fancave-players/
-	kubectl create -f ./fancave-teams/
-	kubectl create -f ./fancave-client/
+    kubectl apply -f ./fancave-db/
+	kubectl apply -f ./fancave-news/
+	kubectl apply -f ./fancave-players/
+	kubectl apply -f ./fancave-teams/
+	kubectl apply -f ./fancave-client/
 	```
 
 2. After deployment, you should see the following pods. Their status should display `Running`.
@@ -166,7 +166,7 @@ type: ClusterIP
 		kubernetes        ClusterIP   10.96.0.1        <none>        443/TCP          1h
 	```
 
-In the above output, use the mapped port from the `fancave-client ..... 3080:30661`, specifically 30661. 
+In the above output, use the mapped port from the `fancave-client ..... 3080:30661`, specifically 30661 which is available on the host machine. The port 3008 is exposed at the container-level and not available on the host machine.
 
 5. The fancave application can be accessed using the URL: `http://<kubernetes_host>:30661/index.html`. Click each microservice (news, scores, players and teams). Once you are satisfied that its working, you can close the Web browser.
 
@@ -206,26 +206,26 @@ It also maintains a canonical model of all the services in the mesh and uses thi
 1.  Deploy application using kubectl with Istio. The standard `kubectl` command is augmented to inject the Envoy sidecar proxy into each microservice pod using `istioctl`. 
 
 	```
-	kubectl create -f ./fancave-db/mongodb-claim.yaml
-	kubectl create -f <(istioctl kube-inject -f ./fancave-db/mongodb-deployment.yaml)
-	kubectl create -f <(istioctl kube-inject -f ./fancave-db/mongodb-service.yaml)
+	kubectl apply -f ./fancave-db/mongodb-claim.yaml
+	kubectl apply -f <(istioctl kube-inject -f ./fancave-db/mongodb-deployment.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./fancave-db/mongodb-service.yaml)
 
-	kubectl create -f <(istioctl kube-inject -f ./fancave-players/fancave-server-deployment.yaml)
-	kubectl create -f <(istioctl kube-inject -f ./fancave-players/fancave-server-service.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./fancave-players/fancave-server-deployment.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./fancave-players/fancave-server-service.yaml)
 
-	kubectl create -f <(istioctl kube-inject -f ./fancave-news/fancave-server-deployment.yaml)
-	kubectl create -f <(istioctl kube-inject -f ./fancave-news/fancave-server-service.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./fancave-news/fancave-server-deployment.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./fancave-news/fancave-server-service.yaml)
 
-	kubectl create -f <(istioctl kube-inject -f ./fancave-teams/fancave-server-deployment.yaml)
-	kubectl create -f <(istioctl kube-inject -f ./fancave-teams/fancave-server-service.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./fancave-teams/fancave-server-deployment.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./fancave-teams/fancave-server-service.yaml)
 
-    kubectl create -f <(istioctl kube-inject -f ./fancave-client/fancave-client-deployment.yaml)
-	kubectl create -f <(istioctl kube-inject -f ./fancave-client/fancave-client-service.yaml)
+    kubectl apply -f <(istioctl kube-inject -f ./fancave-client/fancave-client-deployment.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./fancave-client/fancave-client-service.yaml)
 	```
 
 	Istio includes its own command line `istioctl` which contains its own kubernetes-based resources.
 
-2. You will notice that each microservice contains two containers. The second contained added is the sidecar proxy (Envoy).
+2. Enter `kubectl get pods`. You will notice that each microservice contains two containers. The second contained added is the sidecar proxy (Envoy).
 
 	```
 	kubectl get pods
@@ -237,7 +237,7 @@ It also maintains a canonical model of all the services in the mesh and uses thi
 	fancave-teams-6dc947fb7d-f695r     2/2       Running   0          3d
 	```
 
- 3. Install the Istio Ingress with command `kubectl create -f <(istioctl kube-inject -f ./istio/ingress.yaml)`. The Istio ingress gateway is needed for routing to each microservice. 
+ 3. Install the Istio Ingress with command `kubectl apply -f <(istioctl kube-inject -f ./istio/ingress.yaml)`. The Istio ingress gateway is needed for routing to each microservice. 
 
 	```
 	kubectl get gateway
@@ -249,7 +249,7 @@ It also maintains a canonical model of all the services in the mesh and uses thi
 	fancave   4m
 	```
 
-4. Install the Istio Egress with command `kubectl create -f <(istioctl kube-inject -f ./istio/egress.yaml)`. The egress gateway is needed to route to services outside the mesh. Specifically, real-time sports information is obtained from an external source.
+4. Install the Istio Egress with command `kubectl apply -f <(istioctl kube-inject -f ./istio/egress.yaml)`. The egress gateway is needed to route to services outside the mesh. Specifically, real-time sports information is obtained from an external source.
 
 	```
 	kubectl get svc istio-egressgateway -n istio-system
@@ -377,8 +377,8 @@ The `istio\metrics-db.yaml` is configured similarly to the `metrics.yaml` file.
 2. Run the following commands to create the Istio rules:
 
 	```
-	kubectl create -f <(istioctl kube-inject -f ./istio/metrics.yaml)
-	kubectl create -f <(istioctl kube-inject -f ./istio/metrics-db.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./istio/metrics.yaml)
+	kubectl apply -f <(istioctl kube-inject -f ./istio/metrics-db.yaml)
 	```
 
 3. Run the prometheus handler using `port-forward` kubectl command.
@@ -393,7 +393,7 @@ The `istio\metrics-db.yaml` is configured similarly to the `metrics.yaml` file.
 
 6. Enter the query `istio_request_count`. You should see the request count for each service call.
 
-7. Repeat the step with the query `mongo_sent_bytes`. You should see the number of bytes sent.
+7. Repeat the step with the query `istio_mongo_sent_bytes`. You should see the number of bytes sent.
 
 ## 1.8. Setting Rate Limits
 
@@ -417,7 +417,7 @@ In this section, you will configure Istio policies to control access to microser
 
 	This policy defines a default rate limit of 5000 if no match is provided. If the service named under `overrides` is named `players`, which is identified using `destination.labels["app"]` than the rate limit policy is 3 (`maxAmount`) every 10 seconds (`validDuration`).
 
-  2. Create the rate limit policy with the command `kubectl create -f <(istioctl kube-inject -f ./istio/rate-limit.yaml)`
+  2. Create the rate limit policy with the command `kubectl apply -f <(istioctl kube-inject -f ./istio/rate-limit.yaml)`
 
   3. Click the Players tab and select each league. The fourth league selected within 10 seconds will trigger the rate limit with an error (response code 429) since the threshold is exceeded. You can use any debugger tools (ie Google Chrome Developer Tools) to examine the response code to validate the rate limit policy is triggered. Once each league is clicked, the data will be cached, so if you want to trigger the rate limit again, you will need to refresh the Web page.
 
