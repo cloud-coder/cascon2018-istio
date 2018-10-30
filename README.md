@@ -67,15 +67,15 @@ Before we get into the details of this tutorial, it is important to understand t
 	![alt](images/api-uservice-design.png)
 
 
-An API exposes a set of functionality from one or more microservicies at the ingress to the client application. In a microservices-based application, the quantity of runtime components increases, which requires enhanced management capabilities to provide operational resiliency and performance. Container platforms, such as Kubernetes provide scheduling, monitoring and load balancing of containers, but don't manage the interaction between microservices. For example, digital applications need rate limiting between microservices, application-specific load balancing, microservices security, and much more. Istio is a microservices management platform, built on top of Kubernetes, which introduces a [side-car architecture](https://istio.io/docs/concepts/what-is-istio/#architecture) to deliver a comprehensive set of microservices management features. 
+An API exposes a set of functionality from one or more microservices at the ingress to the client application. In a microservices-based application, the quantity of runtime components increases, which requires enhanced management capabilities to provide operational resiliency and performance. Container platforms, such as Kubernetes provide scheduling, monitoring and load balancing of containers, but don't manage the interaction between microservices. For example, digital applications need rate limiting between microservices, application-specific load balancing, microservices security, and much more. Istio is a microservices management platform, built on top of Kubernetes, which introduces a [side-car architecture](https://istio.io/docs/concepts/what-is-istio/#architecture) to deliver a comprehensive set of microservices management features. 
 
-In this tutorial, you will learn how Istio can help manage your microservices-based application, specifically you will start with the deployment of the Fancave application into Kubernetes, and then again using Istio, but demonstrating the microservices management features.
+In this tutorial, you will learn how Istio can help manage your microservices-based application.  Specifically you will start with the deployment of the Fancave application into Kubernetes, and then again using Istio, but demonstrating the microservices management features.
  
 ## 1.3. Deploy application using Kubernetes
 
 The fancave application consists of 5 microservices, whose deployment is grouped info different folders. Each folder contains a Kubernetes deployment and services files.
 
-The artifacts for each microservices are similar. The deployment manifest file defines the cluster port (3080), base image (ozairs/fancave-server:v1), and health checks. An example deployment manifest file for `fancave-players`.
+The artifacts for each microservice are similar. The deployment manifest file defines the cluster port (3080), base image (ozairs/fancave-server:v1), and health checks. An example deployment manifest file for `fancave-players`.
 
 ```
 apiVersion: extensions/v1beta1
@@ -142,9 +142,10 @@ type: ClusterIP
 	kubectl apply -f ./fancave-client/
 	```
 
-2. After deployment, you should see the following pods. Their status should display `Running`.
+2. After deployment, you should see the following pods. Use the command `kubectl get pods`.  Their status should display `Running`.
 
 	```
+     
 	NAME                              READY     STATUS    RESTARTS   AGE
 	fancave-client-66764c4796-jdzls   1/1       Running   0          20m
 	fancave-db-c9d67ccb7-r62hx        1/1       Running   0          25m
@@ -153,7 +154,7 @@ type: ClusterIP
 	fancave-teams-5c9d65b88c-jvncc    1/1       Running   0          21m
 	```
 
-3. Run the Fancave application using the fancave-client microservice. You will first need to determine the IP address of the kubernetes cluster. This should be the IP address of your primary Ethernet interface. If your running on minikube, you can enter the command `minikube ip`. 
+3. Run the Fancave application using the fancave-client microservice. You will first need to determine the IP address of the kubernetes cluster. This should be the IP address of your primary Ethernet interface. If you're running on minikube, you can enter the command `minikube ip`. 
 
 4. The port numbers for the cluster is obtained using the command `kubectl get services`. 
 	```
@@ -180,7 +181,7 @@ In the above output, use the mapped port from the `fancave-client ..... 3080:306
 
 ## 1.4. Deploy application using Istio
 
-In this section, you will deploy the same Fancave application with Istio. It uses the same principals as a Kubernetes deployment with the exception that Istio deploys a sidecar proxy (Envoy) into each microservices pod. Furthermore, Istio deploys a set of management components (mixer/pilot). The Envoy sidecar communicates with the Mixer/Pilot pods to enforce microservice management policies. The biggest value of this approach is that you don't need to make **any code changes** to your microservices to leverage these policies. Istio policies are provided via YAML and are enforced using Envoy and Mixer/Pilot components, leveraging the underlying platform.
+In this section, you will deploy the same Fancave application with Istio. It uses the same principles as a Kubernetes deployment with the exception that Istio deploys a sidecar proxy (Envoy) into each microservices pod. Furthermore, Istio deploys a set of management components (mixer/pilot). The Envoy sidecar communicates with the Mixer/Pilot pods to enforce microservice management policies. The biggest value of this approach is that you don't need to make **any code changes** to your microservices to leverage these policies. Istio policies are provided via YAML and are enforced using Envoy and Mixer/Pilot components, leveraging the underlying platform.
 
 **Background**
 
@@ -302,7 +303,7 @@ The service graph plugin provides a visual view of the dependencies between each
 
 ## 1.6. Distributed Tracing
 
-In this section, you will use the tracing plugin to view tracing information between microservices. In a microservices-based application, the number of microservices invoked will increase, which requires additional operational visibiltiy when debugging transactions. Istio provides built-in support with Jaegar to visually view the latency for each transaction across all the microservices. You can simply open a Web browser link to the tracing plugin.
+In this section, you will use the tracing plugin to view tracing information between microservices. In a microservices-based application, the number of microservices invoked will increase, which requires additional operational visibility when debugging transactions. Istio provides built-in support with Jaegar to visually view the latency for each transaction across all the microservices. You can simply open a Web browser link to the tracing plugin.
 
 1. Make sure the tracing service is running using the command `kubectl get service jaeger-query -n istio-system`
 
@@ -334,7 +335,7 @@ Note: Tracing requires propagation of the following HTTP headers, which is alrea
 
 ## 1.7. Viewing Istio Metrics
 
-In this section, you will examine runtime metrics generated from microservices. Unlike, previous Istio sections, you will need to deploy Istio policy files describing the metrics that you want to generate. 
+In this section, you will examine runtime metrics generated from microservices. Unlike previous Istio sections, you will need to deploy Istio policy files describing the metrics that you want to generate. 
 
 1. Open the `istio/metrics.yaml` file. You will notice three sections (separated with ---) which provides the metrics definitions. 
 
@@ -387,7 +388,7 @@ The `istio\metrics-db.yaml` is configured similarly to the `metrics.yaml` file.
 	kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=prometheus -o jsonpath='{.items[0].metadata.name}') 9090:9090 &
 	```
 
-4. Open a Web browser and enter the URL http://127.0.0.1:9090/graph. This should display the Promethus UI. 
+4. Open a Web browser and enter the URL http://127.0.0.1:9090/graph. This should display the Prometheus UI. 
 
 5. Refresh the Fancave application and click the various microservices to generate metrics data.
 
